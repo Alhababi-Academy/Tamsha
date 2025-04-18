@@ -48,6 +48,7 @@ def signup_view(request):
             user.otp_email = "1234"  # For dev/testing
             user.save()
             request.session["email"] = user.email
+            request.session.modified = True
             return redirect("accounts:otp")
         except IntegrityError as e:
             return render(request, "accounts/signup.html", {"error": str(e)})
@@ -56,12 +57,20 @@ def signup_view(request):
 
 def otp_view(request):
     if request.method == "POST":
-        otp_entered = str(request.POST.get("otp"))
+        otp_entered = request.POST.get("otp", "")
         email = request.session.get("email")
+
+        print(f"[DEBUG] OTP Entered: {otp_entered}, Email from session: {email}")  # Debug
+
+        if not email:
+            print("[ERROR] No email in session")  # Debug
+            return redirect("accounts:login")
 
         try:
             user = User.objects.get(email=email)
+            print(f"[DEBUG] User OTP: {user.otp_email}")  # Debug
         except User.DoesNotExist:
+            print("[ERROR] User not found")  # Debug
             return redirect("accounts:login")
 
         if otp_entered == user.otp_email:
@@ -69,9 +78,11 @@ def otp_view(request):
             user.otp_email = ""
             user.save()
             login(request, user)
+            print("[SUCCESS] OTP verified, user logged in")  # Debug
             return redirect("explore")
-
-        return render(request, "accounts/otp.html", {"error": "Invalid OTP. Please try again."})
+        else:
+            print(f"[ERROR] OTP mismatch: {otp_entered} vs {user.otp_email}")  # Debug
+            return render(request, "accounts/otp.html", {"error": "Invalid OTP. Please try again."})
 
     return render(request, "accounts/otp.html")
 
