@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+
+<div class="min-h-screen bg-[#f9f6fb] flex flex-col items-center justify-center px-4 py-10">
+  <img src="{% static 'Tamsha/logo.png' %}" alt="Tamsha Logo" class="h-16 mb-6">
+  <h1 class="text-2xl md:text-3xl font-semibold text-[#7d449f] text-center mb-8">
+    What Places And Activities do you want to explore?
+  </h1>
+
+  <form method="POST" class="w-full max-w-3xl">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 bg-white p-10 rounded-2xl shadow-lg">
+        {% for activity in activities %}
+        <label class="relative cursor-pointer flex items-center">
+            <input type="checkbox" name="activities" value="{{ activity.name|lower }}" class="peer w-5 h-5 mr-2" {% if activity.selected %}checked{% endif %}>
+            <div class="flex flex-col items-center border border-purple-200 rounded-xl p-4 transition-all peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-500 peer-checked:shadow-md">
+                <img src="{% static activity.image %}" alt="{{ activity.name }}" class="w-24 h-24 object-contain mb-2">
+                <span class="text-center text-sm text-[#7d449f] font-medium">{{ activity.name }}</span>
+            </div>
+        </label>
+        {% endfor %}
+    </div>
+
+    <div class="mt-10 flex justify-center">
+      <button type="submit" class="bg-[#7d449f] hover:bg-[#5e357c] text-white text-lg font-semibold px-12 py-4 rounded-full shadow-lg transition duration-200 ease-in-out transform hover:scale-105">
+        Confirm Selection
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

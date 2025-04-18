@@ -1,0 +1,99 @@
+{% load static tailwind_tags %}
+{% load static %}
+<html>
+    <head>{% tailwind_css %}</head>
+    <body>
+        <div class="min-h-screen bg-[#fcf9ff] flex flex-col items-center justify-start p-4">
+            {% comment %} Logo  {% endcomment %}
+            <div class="w-full max-w-[200px] mb-8 mt-8">
+                <Image
+                    src="{% static 'Tamsha/logo.png' %}"
+                    alt="Tamsha Logo"
+                    width={200}
+                    height={80}
+                    class="w-full h-auto"
+                    />
+                </div>
+                {% comment %} Sign up form  {% endcomment %}
+                <div class="w-full max-w-md bg-white rounded-lg p-8 shadow-sm">
+                    <h1 class="text-2xl font-semibold text-[#644378] mb-6 text-center">Sign up</h1>
+                    {% if error %}
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                             role="alert">
+                            <span class="block sm:inline">{{ error }}</span>
+                        </div>
+                    {% endif %}
+                    <form class="space-y-4" method="POST">
+                        {% csrf_token %}
+                        {% comment %} Name fields  {% endcomment %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="firstName" class="block text-sm text-[#644378] mb-1">First name</label>
+                                <input type="text"
+                                       value="{{ request.POST.firstName }}"
+                                       name="firstName"
+                                       class="w-full px-3 py-2 border border-[#cdc6db] rounded-md focus:outline-none focus:ring-1 focus:ring-[#7d449f]"
+                                       required />
+                            </div>
+                            <div>
+                                <label htmlFor="lastName" class="block text-sm text-[#644378] mb-1">Last name</label>
+                                <input type="text"
+                                       value="{{ request.POST.lastName }}"
+                                       name="lastName"
+                                       class="w-full px-3 py-2 border border-[#cdc6db] rounded-md focus:outline-none focus:ring-1 focus:ring-[#7d449f]"
+                                       required />
+                            </div>
+                        </div>
+                        {% comment %} Email field  {% endcomment %}
+                        <div>
+                            <label htmlFor="email" class="block text-sm text-[#644378] mb-1">Email</label>
+                            <input type="email"
+                                   value="{{ request.POST.email }}"
+                                   name="email"
+                                   class="w-full px-3 py-2 border border-[#cdc6db] rounded-md focus:outline-none focus:ring-1 focus:ring-[#7d449f]"
+                                   required />
+                        </div>
+                        {% comment %} Phone number field  {% endcomment %}
+                        <div>
+                            <label htmlFor="phonenumber" class="block text-sm text-[#644378] mb-1">Phone number</label>
+                            <input type="tel"
+                                   value="{{ request.POST.phonenumber}}"
+                                   name="phonenumber"
+                                   class="w-full px-3 py-2 border border-[#cdc6db] rounded-md focus:outline-none focus:ring-1 focus:ring-[#7d449f]"
+                                   required />
+                        </div>
+                        {% comment %} Password field  {% endcomment %}
+                        <div>
+                            <label htmlFor="password" class="block text-sm text-[#644378] mb-1">Password</label>
+                            <input type="password"
+                                   name="password"
+                                   class="w-full px-3 py-2 border border-[#cdc6db] rounded-md focus:outline-none focus:ring-1 focus:ring-[#7d449f]"
+                                   required />
+                        </div>
+                        <div>
+                            <label htmlFor="password2" class="block text-sm text-[#644378] mb-1">Password confirmation</label>
+                            <input type="password"
+                                   name="password2"
+                                   class="w-full px-3 py-2 border border-[#cdc6db] rounded-md focus:outline-none focus:ring-1 focus:ring-[#7d449f]"
+                                   required />
+                        </div>
+                        {% comment %} Sign up button  {% endcomment %}
+                        <button type="submit"
+                                class="w-full bg-[#7d449f] text-white py-2 px-4 rounded-md hover:bg-[#644378] transition-colors">
+                            Sign up
+                        </button>
+                    </form>
+                    {% comment %} Login link  {% endcomment %}
+                    <p class="mt-4 text-center text-sm text-gray-600">
+                        Already have an account?
+                        <a href="{% url "accounts:login" %}"
+                           class="text-[#7d449f] hover:underline">Log in</a>
+                    </p>
+                </div>
+                {% comment %} Footer  {% endcomment %}
+                <footer class="mt-8 mb-4 text-center text-sm text-gray-500">
+                    © 2024. All rights reserved.
+                </footer>
+            </div>
+        </body>
+    </html>

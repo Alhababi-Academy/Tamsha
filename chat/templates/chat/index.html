@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+{% load static %}
+{% block main %}
+    <script src="{% static "Tamsha/marked.min.js" %}"></script>
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-[#7d449f] text-3xl font-semibold mb-2">Hi there, Sara</h1>
+            <p class="text-[#7d449f] text-xl">What would you like to know?</p>
+            <button id="clear-chat-btn"
+                    class="mt-3 px-4 py-2 bg-white text-[#7d449f] border border-[#7d449f] rounded-lg hover:bg-[#f4e9fb] transition-colors">
+                <svg class="h-4 w-4 inline-block mr-1"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Clear Chat
+            </button>
+        </div>
+        <div id="chat-messages" class="space-y-6">
+            <!-- Initial Message -->
+            <div class="bg-[#f4e9fb] rounded-lg p-4 max-w-2xl">
+                <p class="text-[#212121]">
+                    Hello! I'm Tamsha, your virtual guide to discover the best of Saudi Arabia.
+                    How can I assist you today?
+                </p>
+            </div>
+            <!-- Historical Messages -->
+            {% for message in chat_history %}
+                <div class="{% if message.role == 'human' %}bg-white border border-[#e3e3e3] ml-auto{% else %}bg-[#f4e9fb]{% endif %} rounded-lg p-4 max-w-2xl markdown">
+                    <p class="text-[#212121]">{{ message.content|markdown }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="relative mb-8 mt-8">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-[#a5a5a5]"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input type="text"
+                   id="message-input"
+                   placeholder="Write your question or request here..."
+                   class="w-full pl-10 pr-12 py-3 border border-[#d9d9d9] rounded-lg focus:outline-none focus:border-[#7d449f] bg-white"
+                   onkeypress="handleKeyPress(event)" />
+            <button id="send-btn"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onclick="sendMessage()">
+                <svg class="h-5 w-5 text-[#7d449f]" style="transform: rotate(44deg);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L15 22L11 13L2 9L22 2Z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script>
+        let sessionId = "{{ session_id }}";
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const sendBtn = document.getElementById('send-btn');
+        let currentEventSource = null;
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function addMessage(text, sender, id=null) {
+            const messageDiv = document.createElement('div');
+            if (id) messageDiv.id = id;
+            messageDiv.className = `rounded-lg p-4 max-w-2xl markdown ${
+                sender === 'human' 
+                    ? 'bg-white border border-[#e3e3e3] ml-auto' 
+                    : 'bg-[#f4e9fb]'
+            }`;
+            
+            const messageContent = document.createElement('p');
+            messageContent.className = 'text-[#212121]';
+            messageContent.textContent = text;
+            
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+            return messageDiv;
+        }
+
+        async function sendMessage() {
+            if (messageInput.disabled) return; // disable sending if busy
+            const userMessage = messageInput.value.trim();
+            if (!userMessage) return;
+            
+            // Disable UI while waiting for response
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+            
+            // Add user message
+            const userMsgElement = addMessage(userMessage, 'human');
+            messageInput.value = '';
+
+            // Clear any existing connection
+            if (currentEventSource) {
+                currentEventSource.close();
+            }
+
+            // Create bot message placeholder
+            const botMsgId = `bot-msg-${Date.now()}`;
+            const botMsgElement = addMessage('', 'bot', botMsgId);
+
+            try {
+                let botMessageMarkdown = '';
+
+                currentEventSource = new EventSource(`/chat/?input=${encodeURIComponent(userMessage)}&session_id=${sessionId}`);
+                
+                currentEventSource.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        if (data.error) {
+                            
+                             // Check if the error message indicates a ratelimit issue
+                            if (data.error.toLowerCase().includes("rate limit")) {
+                                botMsgElement.textContent = 'Rate limit reached. Please wait a moment before trying again.';
+                            } else {
+                                botMsgElement.textContent = `Error: ${data.error}`;
+                            }
+
+                            botMsgElement.classList.add('text-red-500');
+                            currentEventSource.close();
+                            currentEventSource = null;
+                            messageInput.disabled = false;
+                            sendBtn.disabled = false;
+                            return;
+                        }
+                        
+                        // Check for completion flag sent by the server
+                        if (data.done) {
+                            currentEventSource.close();
+                            currentEventSource = null;
+                            messageInput.disabled = false;
+                            sendBtn.disabled = false;
+                            return;
+                        }
+                        
+                        if (data.token) {
+                            // botMsgElement.textContent += data.token;
+                            botMessageMarkdown += data.token;
+
+                            botMsgElement.innerHTML = marked.parse(botMessageMarkdown);
+
+                            botMsgElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    } catch (e) {
+                        console.error('Error parsing event data:', e);
+                    }
+                };
+
+                currentEventSource.onerror = (error) => {
+                    console.error('EventSource error:', error);
+                    if (botMsgElement.textContent === '') {
+                        botMsgElement.textContent = 'Connection interrupted. Please try again.';
+                    }
+                    currentEventSource.close();
+                    currentEventSource = null;
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                };
+
+            } catch (error) {
+                console.error('Error:', error);
+                botMsgElement.textContent = 'Failed to send message. Please try again.';
+                botMsgElement.classList.add('text-red-500');
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+            }
+        }
+
+        // CSRF token helper
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Clear chat messages
+         // Add the clear chat functionality
+        document.getElementById('clear-chat-btn').addEventListener('click', clearChat);
+
+        function clearChat() {
+            // Ask for confirmation before clearing
+            if (!confirm("Are you sure you want to clear the entire chat history?")) {
+                return;
+            }
+            
+            // Keep only the initial welcome message
+            const welcomeMessage = chatMessages.firstElementChild;
+            chatMessages.innerHTML = '';
+            chatMessages.appendChild(welcomeMessage);
+            
+            // Clear session data from the server
+            fetch('/chat/clear/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'session_id': sessionId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Server error when clearing chat');
+                }
+            })
+            .catch(error => {
+                console.error('Error clearing chat history:', error);
+            });
+        }
+
+    </script>
+{% endblock main %}

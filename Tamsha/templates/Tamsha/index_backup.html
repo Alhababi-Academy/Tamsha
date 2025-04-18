@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TAMSHA - Discover Saudi Arabia</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+        .bg-custom {
+                background-image: linear-gradient(to bottom, rgb(30 30 63 / 21%), rgb(30 30 63 / 92%)), url('{% static "Tamsha/landing_bg.png" %}');
+            background-position: center bottom;
+            background-size: cover;
+        }
+        </style>
+    </head>
+    <body class="bg-[#1e1e3f] text-white">
+        <div class="relative h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+            <!-- Background image -->
+            <div class="absolute inset-0 z-0 bg-custom"></div>
+            <div class="z-10 flex flex-col items-center justify-center text-center px-4 space-y-8">
+                <!-- Welcome text -->
+                <h1 class="text-5xl md:text-6xl font-light tracking-wide">Welcome to</h1>
+                <!-- TAMSHA Logo -->
+                <div class="w-64 md:w-72 my-6">
+                    <img src="{% static 'Tamsha/logo_w.png' %}"
+                         alt="TAMSHA Logo"
+                         class="w-full h-auto">
+                </div>
+                <!-- Tagline -->
+                <p class="text-xl md:text-2xl font-light tracking-wide max-w-3xl">
+                    your ultimate guide to discovering the beauty of Saudi Arabia
+                </p>
+                <!-- Get started button -->
+                <a href="{% url 'chat:index' %}"
+                   class="mt-8 bg-[#7d449f] hover:bg-[#8d54af] text-white font-medium py-3 px-12 rounded-full transition duration-300 text-lg">
+                    Get started
+                </a>
+            </div>
+        </div>
+    </body>
+</html>

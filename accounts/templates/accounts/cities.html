@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+<style>
+  .section-width {
+    width: 900px;
+    margin: 0 auto;
+  }
+  .image-container {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<section class="bg-white py-8 section-width">
+  <div class="container mx-auto px-4">
+    <!-- Title and Subtitle -->
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold text-[#7d449f]">Discover Saudi Arabia's Cities</h1>
+      <p class="text-lg text-[#7d449f] mt-1">Explore The Beauty And Culture Of Saudi Arabia's Diverse Cities. Choose A City To Learn More About The Best Destinations And Attractions It Has To Offer.</p>
+    </div>
+
+    <!-- List Of Cities Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-[#7d449f]">List Of Cities</h2>
+      <a href="#" class="text-[#7d449f] hover:underline flex items-center">SEE MORE <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+    </div>
+
+    <!-- City Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Riyadh Card -->
+      <div class="bg-white rounded-lg shadow-md relative">
+        <div class="image-container">
+          <img src="{% static 'Tamsha/riyadh.png' %}" alt="Riyadh" class="w-full h-20 object-cover rounded-lg">
+        </div>
+        <div class="p-4 text-center">
+          <h3 class="text-base font-bold text-[#7d449f] mb-1">Riyadh</h3>
+          <p class="text-sm text-gray-700">A Vibrant Capital Where Heritage Meets Modernity, Showcasing Iconic Landmarks, Rich Culture, And Rapid Innovation.</p>
+        </div>
+      </div>
+
+      <!-- Jeddah Card -->
+      <div class="bg-white rounded-lg shadow-md relative">
+        <div class="image-container">
+          <img src="{% static 'Tamsha/jeddah.png' %}" alt="Jeddah" class="w-full h-20 object-cover rounded-lg">
+        </div>
+        <div class="p-4 text-center">
+          <h3 class="text-base font-bold text-[#7d449f] mb-1">Jeddah</h3>
+          <p class="text-sm text-gray-700">A Lively Coastal City With Rich History, Diverse Culture, And Beautiful Beaches.</p>
+        </div>
+      </div>
+
+      <!-- AlUla Card -->
+      <div class="bg-white rounded-lg shadow-md relative">
+        <div class="image-container">
+          <img src="{% static 'Tamsha/alula.png' %}" alt="AlUla" class="w-full h-20 object-cover rounded-lg">
+        </div>
+        <div class="p-4 text-center">
+          <h3 class="text-base font-bold text-[#7d449f] mb-1">AlUla</h3>
+          <p class="text-sm text-gray-700">A Historic City With Ancient Monuments And Stunning Natural Landscapes.</p>
+        </div>
+      </div>
+
+      <!-- Red Sea Card -->
+      <div class="bg-white rounded-lg shadow-md relative">
+        <div class="image-container">
+          <img src="{% static 'Tamsha/Red_Sea.png' %}" alt="Red Sea" class="w-full h-20 object-cover rounded-lg">
+        </div>
+        <div class="p-4 text-center">
+          <h3 class="text-base font-bold text-[#7d449f] mb-1">Red Sea</h3>
+          <p class="text-sm text-gray-700">A Natural Wonder Offering A Journey Into The Kingdom's Depths, With Stunning Coral Reefs And Unique Marine Life.</p>
+        </div>
+      </div>
+
+      <!-- Makkah Card -->
+      <div class="bg-white rounded-lg shadow-md relative">
+        <div class="image-container">
+          <img src="{% static 'Tamsha/makkah.png' %}" alt="Makkah" class="w-full h-20 object-cover rounded-lg">
+        </div>
+        <div class="p-4 text-center">
+          <h3 class="text-base font-bold text-[#7d449f] mb-1">Makkah</h3>
+          <p class="text-sm text-gray-700">The Holiest City In Islam And A Destination For Millions Of Visitors From All Over The World.</p>
+        </div>
+      </div>
+
+      <!-- Madinah Card -->
+      <div class="bg-white rounded-lg shadow-md relative">
+        <div class="image-container">
+          <img src="{% static 'Tamsha/madinah.png' %}" alt="Madinah" class="w-full h-20 object-cover rounded-lg">
+        </div>
+        <div class="p-4 text-center">
+          <h3 class="text-base font-bold text-[#7d449f] mb-1">Madinah</h3>
+          <p class="text-sm text-gray-700">A Spiritual Haven Of History And Beauty, Adorned With Islamic Landmarks And Welcoming Visitors Worldwide.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="mt-8 flex justify-center">
+      <div class="flex items-center w-full max-w-lg">
+        <button class="bg-[#7d449f] rounded-full p-2 mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+        <input type="text" placeholder="find a city or tourist attraction..." class="flex-grow px-3 py-1 rounded-full border border-[#7d449f] focus:outline-none focus:ring-2 focus:ring-[#7d449f] placeholder:text-gray-500 text-sm">
+      </div>
+    </div>
+
+    <!-- Concluding Text -->
+    <p class="text-center text-gray-600 mt-3 text-sm">Whether You Are Looking For Ancient Heritage, Stunning Nature, Or Modern Experiences, You Will Find Something To Inspire You In Saudi Arabia's Cities.</p>
+  </div>
+</section>
+{% endblock main %}

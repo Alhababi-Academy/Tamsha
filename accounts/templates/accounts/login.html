@@ -1,0 +1,61 @@
+{% load static tailwind_tags %}
+{% load static %}
+<html>
+    <head>{% tailwind_css %}</head>
+    <body>
+        <div class="min-h-screen w-full bg-[#fcf9ff] flex flex-col items-center justify-between py-8">
+            <div class="w-full max-w-md px-6">
+                <div class="flex justify-center mb-12">
+                    <Image
+                        src="{% static 'Tamsha/logo.png' %}"
+                        alt="Tamsha Logo"
+                        width={180}
+                        height={60}
+                        class="h-auto"
+                        />
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h1 class="text-[#7d449f] text-2xl font-semibold text-center mb-8">Welcome back</h1>
+                        {% if error %}
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                                 role="alert">
+                                <span class="block sm:inline">{{ error }}</span>
+                            </div>
+                        {% endif %}
+                        <form class="space-y-6" method="post">
+                            {% csrf_token %}
+                            <div class="space-y-2">
+                                <label class="block text-[#644378]">Email or Phone number</label>
+                                <input type="text"
+                                       name="username"
+                                       class="w-full px-4 py-3 rounded-lg border border-[#cdc6db] focus:outline-none focus:border-[#7d449f]"
+                                       required />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[#644378]">Password</label>
+                                <input type="password"
+                                       name="password"
+                                       class="w-full px-4 py-3 rounded-lg border border-[#cdc6db] focus:outline-none focus:border-[#7d449f]"
+                                       required />
+                            </div>
+                            <button type="submit"
+                                    class="w-full bg-[#7d449f] text-white py-3 rounded-lg hover:bg-[#644378] transition-colors">
+                                Log in
+                            </button>
+                        </form>
+                        <div class="mt-6 text-center text-[#808080]">
+                            Forgot your password?
+                            <a href="{% url "accounts:password_reset" %}"
+                               class="text-[#7d449f] hover:underline">Reset password</a>
+                        </div>
+                        <div class="xmt-6 text-center text-[#808080]">
+                            Don't have an account?
+                            <a href="{% url "accounts:signup" %}"
+                               class="text-[#7d449f] hover:underline">Sign up</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-[#808080] text-sm mt-8">© 2024. All rights reserved.</div>
+            </div>
+        </body>
+    </html>

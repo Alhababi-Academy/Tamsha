@@ -1,0 +1,50 @@
+{% load static tailwind_tags %}
+{% load static %}
+<html>
+    <head>{% tailwind_css %}</head>
+    <body>
+        <div class="min-h-screen bg-[#fcf9ff] flex flex-col">
+            {% comment %} Header {% endcomment %}
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                    <div class="flex items-center justify-between w-full">
+                        <a href="/">
+                            <img src="{% static 'Tamsha/logo.png' %}"
+                                 alt="Tamsha Logo"
+                                 class="h-[4rem]" />
+                        </a>
+                        <div class="flex gap-4 items-center">
+                            <nav class="hidden md:flex items-center gap-6">
+                                <a href="/" class="text-[#212121] hover:text-[#7d449f]">Home</a>
+                                <a href="{% url 'chat:index' %}"
+                                   class="text-[#212121] hover:text-[#7d449f]">Virtual Assistant</a>
+                                {% if user.is_authenticated %}
+                                    <form action="{% url 'accounts:logout' %}"
+                                          method="post"
+                                          class="flex items-center justify-center mb-0">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-[#212121] hover:text-[#7d449f]">Logout</button>
+                                    </form>
+                                {% else %}
+                                    <a href="{% url 'accounts:login' %}"
+                                       class="text-[#212121] hover:text-[#7d449f]">Login</a>
+                                {% endif %}
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            {% comment %} Main Chat Area {% endcomment %}
+            <main class="flex-1 w-full">
+                {% block main %}
+                {% endblock main %}
+            </main>
+            {% comment %} Footer {% endcomment %}
+            <footer class="text-gray-400 text-sm mt-16 py-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    © 2024 All rights reserved.
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>
